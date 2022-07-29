@@ -36,5 +36,5 @@ yarn locklift run -s ./scripts/10-deploy-token-root.js -n local --config locklif
 ```
 <img width="1085" alt="image" src="https://user-images.githubusercontent.com/44075582/181854237-08ff42a0-960f-4f05-90aa-c2d8a4a7074e.png">
 
-## Congratulations, you have deployed your first TYPE-3 Token
+## Congratulations, you have deployed your first TIP-3 Token
 
