@@ -1,8 +1,8 @@
 # tip3-deploy-onboarding
 
 ### Built With
-NodeJS (tested with NodeJS v16+)
-Yarn
+- NodeJS (tested with NodeJS v16+)
+- Yarn
 
 ## Getting Started
 
