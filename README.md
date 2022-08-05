@@ -45,7 +45,7 @@ You can deploy a TIP3 wallet using an account or implement it in a smart contrac
 ```javascript
  const accountsFactory = locklift.factory.getAccountsFactory("Account");
  const account = accountsFactory.getAccount(myAccountAddress, myPublicKey);
- const tokenRoot = locklift.factory.getDeployedContract("DeployerTIP3Wallet", deployerAddress);
+ const tokenRoot = locklift.factory.getDeployedContract("TokenRoot", tokenRootAddress);
  await account.runTarget(
     {
       contract: tokenRoot,
@@ -122,4 +122,40 @@ contract DeployerTIP3Wallet is CheckPubKey {
       }),
   );
   const myTokenWallet : Address = await deployer.methods.tokenWallet({}).call({});
+```
+
+## Transfer tokens
+
+### With Account
+
+```javascript
+ const accountsFactory = locklift.factory.getAccountsFactory("Account");
+ const account = accountsFactory.getAccount(myAccountAddress, myPublicKey);
+ const tokenWallet = locklift.factory.getDeployedContract("TokenWallet", tokenWalletAddress);
+ await account.runTarget(
+    {
+      contract: tokenWallet,
+      value: locklift.utils.toNano(2),
+    },
+    tw =>
+       tw.methods.transfer({
+        amount: 100,
+        recipient: aliceAddress,
+        deployWalletValue: 0,
+        remainingGasTo: account.address,
+        
+        (** 
+             Flag for token wallet to send transfer callback. 
+             We are passing Falls because the base Account does not have a callback implementation.
+         **)
+        notify: false,  
+        payload: "te6ccgEBAQEAAgAAAA==",
+      }),
+  );
+  
+  const walletAddress = (
+    await tokenRoot.methods
+      .walletOf({ answerId: 0, walletOwner: account.address })
+      .call({ responsible: true })
+  ).value0;
 ```
