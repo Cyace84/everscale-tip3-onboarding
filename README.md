@@ -41,8 +41,6 @@ yarn locklift run -s ./scripts/10-deploy-token-root.js -n local --config locklif
 
 To deploy a wallet, you need a smart contract
 
-<img width="693" alt="image" src="https://user-images.githubusercontent.com/44075582/183107567-d3378fd8-ad4f-4c15-bbd2-f46aeade169a.png">
-
 ```solidity
 pragma ton-solidity >= 0.57.3;
 pragma AbiHeader expire;
