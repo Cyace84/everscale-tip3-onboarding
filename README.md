@@ -83,7 +83,7 @@ contract DeployerTIP3Wallet is CheckPubKey {
  await account.runTarget(
     {
       contract: deployer,
-      value: locklift.utils.toNano(1),
+      value: locklift.utils.toNano(6),
     },
     tr =>
       tr.methods.deployTIP3Wallet({
