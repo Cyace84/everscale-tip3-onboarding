@@ -43,6 +43,41 @@ To deploy a wallet, you need a smart contract
 
 <img width="693" alt="image" src="https://user-images.githubusercontent.com/44075582/183107567-d3378fd8-ad4f-4c15-bbd2-f46aeade169a.png">
 
+```solidity
+pragma ton-solidity >= 0.57.3;
+pragma AbiHeader expire;
+pragma AbiHeader pubkey;
+
+import '@broxus/contracts/contracts/utils/CheckPubKey.sol';
+import "@broxus/tip3/contracts/interfaces/ITokenRoot.sol";
+
+contract DeployerTIP3Wallet is CheckPubKey {
+    address tokenRoot;
+    address tokenWallet;
+
+    function deployTIP3Wallet(
+        uint128 _deployWalletBalance,
+        address _owner
+    ) public checkPubKey view {
+        tvm.accept();
+        ITokenRoot(tokenRoot).deployWallet{
+            value: _deployWalletBalance + 0.5 ever,
+            flag: 2,
+            callback: DeployerTIP3Wallet.receiveTokenWalletAddress
+        }(
+            _owner,
+            _deployWalletBalance
+        );
+    }
+
+    function receiveTokenWalletAddress(address wallet) external {
+        require(msg.sender == tokenRoot, 200, "Sender is not Token Root");
+        tokenWallet = wallet;
+    }
+}
+
+```
+
 ```typescript
  const accountsFactory = locklift.factory.getAccountsFactory("Account");
  const account = accountsFactory.getAccountmyAccountAddress, myPublicKey);
