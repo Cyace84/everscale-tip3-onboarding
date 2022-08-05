@@ -27,7 +27,8 @@ and edit the following options:
 - linker.path
 - networks.local.keys.phrase
 
-## Deploy
+## Deploy ment
+### Deploy to an external owner
 
 Use this command and follow the interactive menu
 
@@ -36,5 +37,11 @@ yarn locklift run -s ./scripts/10-deploy-token-root.js -n local --config locklif
 ```
 <img width="1085" alt="image" src="https://user-images.githubusercontent.com/44075582/181854237-08ff42a0-960f-4f05-90aa-c2d8a4a7074e.png">
 
-## Congratulations, you have deployed your first TIP-3 Token
+### Deploy to an inernal owner
 
+You can deploy a Token Root by sending a message through your Account:
+
+
+```typescript
+yarn locklift run -s ./scripts/10-deploy-token-root.js -n local --config locklift.config.js
+```
