@@ -27,7 +27,7 @@ and edit the following options:
 - linker.path
 - networks.local.keys.phrase
 
-## Deploy ment
+## Deploy Token Root
 ### Deploy to an external owner
 
 Use this command and follow the interactive menu
@@ -37,11 +37,26 @@ yarn locklift run -s ./scripts/10-deploy-token-root.js -n local --config locklif
 ```
 <img width="1085" alt="image" src="https://user-images.githubusercontent.com/44075582/181854237-08ff42a0-960f-4f05-90aa-c2d8a4a7074e.png">
 
-### Deploy to an inernal owner
+## Deploy Token Wallet
 
-You can deploy a Token Root by sending a message through your Account:
+To deploy a wallet, you need a smart contract
 
+<img width="693" alt="image" src="https://user-images.githubusercontent.com/44075582/183107567-d3378fd8-ad4f-4c15-bbd2-f46aeade169a.png">
 
 ```typescript
-yarn locklift run -s ./scripts/10-deploy-token-root.js -n local --config locklift.config.js
+ const accountsFactory = locklift.factory.getAccountsFactory("Account");
+ const account = accountsFactory.getAccountmyAccountAddress, myPublicKey);
+ const deployer = locklift.factory.getDeployedContract("DeployerTIP3Wallet", deployerADdress);
+ await account.runTarget(
+    {
+      contract: deployer,
+      value: locklift.utils.toNano(1),
+    },
+    tr =>
+      tr.methods.deployTIP3Wallet({
+        _deployWalletBalance: locklift.utils.toNano(5),
+        _owner: account.address,
+      }),
+  );
+  const myTokenWallet : Address = await deployer.methods.tokenWallet({}).call({});
 ```
