@@ -39,7 +39,35 @@ yarn locklift run -s ./scripts/10-deploy-token-root.js -n local --config locklif
 
 ## Deploy Token Wallet
 
-To deploy a wallet, you need a smart contract
+You can deploy a TIP3 wallet using an account or implement it in a smart contract:
+
+### With Account
+```javascript
+ const accountsFactory = locklift.factory.getAccountsFactory("Account");
+ const account = accountsFactory.getAccount(myAccountAddress, myPublicKey);
+ const tokenRoot = locklift.factory.getDeployedContract("DeployerTIP3Wallet", deployerAddress);
+ await account.runTarget(
+    {
+      contract: tokenRoot,
+      value: locklift.utils.toNano(6),
+    },
+    tr =>
+      tr.methods.deployWallet({
+        walletOwner: account.address,
+        deployWalletValue: locklift.utils.toNano(5),
+      }),
+  );
+  
+  const walletAddress = (
+    await tokenRoot.methods
+      .walletOf({ answerId: 0, walletOwner: account.address })
+      .call({ responsible: true })
+  ).value0;
+```
+
+### Вirectly in the smart contract
+
+We have two functions. One accesses the token root and deploys a new wallet, and the second accepts a callback with a newly created address
 
 ```solidity
 pragma ton-solidity >= 0.57.3;
@@ -76,9 +104,11 @@ contract DeployerTIP3Wallet is CheckPubKey {
 
 ```
 
+
+
 ```typescript
  const accountsFactory = locklift.factory.getAccountsFactory("Account");
- const account = accountsFactory.getAccountmyAccountAddress, myPublicKey);
+ const account = accountsFactory.getAccount(myAccountAddress, myPublicKey);
  const deployer = locklift.factory.getDeployedContract("DeployerTIP3Wallet", deployerADdress);
  await account.runTarget(
     {
