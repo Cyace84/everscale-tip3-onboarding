@@ -159,3 +159,7 @@ contract DeployerTIP3Wallet is CheckPubKey {
       .call({ responsible: true })
   ).value0;
 ```
+
+### Smart-contract implementation
+
+
