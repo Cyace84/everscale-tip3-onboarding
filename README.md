@@ -1,165 +1,19 @@
-# tip3-deploy-onboarding
+# Smart-contracts Onboarding
 
-### Built With
-- NodeJS (tested with NodeJS v16+)
-- Yarn
+In this onboarding, we will get acquainted with Everscale smart contracts. We  take the [TIP-3 ](https://github.com/broxus/tip3)token as an example and look at two ways to interact with the TIP-3 Token.
 
-## Getting Started
-
-### Prerequisites
-
-Clone the TIP-3 token repository
-```shell
-git clone https://github.com/broxus/tip3
-cd tip3
-```
-
-Install node modules:
-
-```shell
-yarn install
-```
-
-Rname the locklift.config.template.js file to llocklift.config.js
-and edit the following options:
-
-- compiler.path
-- linker.path
-- networks.local.keys.phrase
-
-## Deploy Token Root
-### Deploy to an external owner
-
-Use this command and follow the interactive menu
-
-```shell
-yarn locklift run -s ./scripts/10-deploy-token-root.js -n local --config locklift.config.js
-```
-<img width="1085" alt="image" src="https://user-images.githubusercontent.com/44075582/181854237-08ff42a0-960f-4f05-90aa-c2d8a4a7074e.png">
-
-## Deploy Token Wallet
-
-You can deploy a TIP3 wallet using an account or implement it in a smart contract:
-
-### With Account
-```javascript
- const accountsFactory = locklift.factory.getAccountsFactory("Account");
- const account = accountsFactory.getAccount(myAccountAddress, myPublicKey);
- const tokenRoot = locklift.factory.getDeployedContract("TokenRoot", tokenRootAddress);
- await account.runTarget(
-    {
-      contract: tokenRoot,
-      value: locklift.utils.toNano(6),
-    },
-    tr =>
-      tr.methods.deployWallet({
-        walletOwner: account.address,
-        deployWalletValue: locklift.utils.toNano(5),
-      }),
-  );
-  
-  const walletAddress = (
-    await tokenRoot.methods
-      .walletOf({ answerId: 0, walletOwner: account.address })
-      .call({ responsible: true })
-  ).value0;
-```
-
-### Вirectly in the smart contract
-
-We have two functions. One accesses the token root and deploys a new wallet, and the second accepts a callback with a newly created address
-
-```solidity
-pragma ton-solidity >= 0.57.3;
-pragma AbiHeader expire;
-pragma AbiHeader pubkey;
-
-import '@broxus/contracts/contracts/utils/CheckPubKey.sol';
-import "@broxus/tip3/contracts/interfaces/ITokenRoot.sol";
-
-contract DeployerTIP3Wallet is CheckPubKey {
-    address tokenRoot;
-    address tokenWallet;
-
-    function deployTIP3Wallet(
-        uint128 _deployWalletBalance,
-        address _owner
-    ) public checkPubKey view {
-        tvm.accept();
-        ITokenRoot(tokenRoot).deployWallet{
-            value: _deployWalletBalance + 0.5 ever,
-            flag: 2,
-            callback: DeployerTIP3Wallet.receiveTokenWalletAddress
-        }(
-            _owner,
-            _deployWalletBalance
-        );
-    }
-
-    function receiveTokenWalletAddress(address wallet) external {
-        require(msg.sender == tokenRoot, 200, "Sender is not Token Root");
-        tokenWallet = wallet;
-    }
-}
-
-```
+We will use default Account and  typescript. And in the second case, we will write our smart contract using the TIP-3 Token
 
 
 
-```typescript
- const accountsFactory = locklift.factory.getAccountsFactory("Account");
- const account = accountsFactory.getAccount(myAccountAddress, myPublicKey);
- const deployer = locklift.factory.getDeployedContract("DeployerTIP3Wallet", deployerADdress);
- await account.runTarget(
-    {
-      contract: deployer,
-      value: locklift.utils.toNano(6),
-    },
-    tr =>
-      tr.methods.deployTIP3Wallet({
-        _deployWalletBalance: locklift.utils.toNano(5),
-        _owner: account.address,
-      }),
-  );
-  const myTokenWallet : Address = await deployer.methods.tokenWallet({}).call({});
-```
+{% hint style="info" %}
+TIP-3 Token is a Everscale token standard that describes the basic principles of building smart token contracts.
 
-## Transfer tokens
+The TIP-3 token standard contains:
 
-### With Account
+* Smart contracts of custom wallets have the right to deploy only the root smart contract from their address.
+* User wallets have the same code as the root smart contract, but contain different user data.
+* The TIP-3 standard also describes the basic ways of interaction of user smart contracts with each other and a mechanism for checking the type of a smart contract by its address on the blockchain.
 
-```javascript
- const accountsFactory = locklift.factory.getAccountsFactory("Account");
- const account = accountsFactory.getAccount(myAccountAddress, myPublicKey);
- const tokenWallet = locklift.factory.getDeployedContract("TokenWallet", tokenWalletAddress);
- await account.runTarget(
-    {
-      contract: tokenWallet,
-      value: locklift.utils.toNano(2),
-    },
-    tw =>
-       tw.methods.transfer({
-        amount: 100,
-        recipient: aliceAddress,
-        deployWalletValue: 0,
-        remainingGasTo: account.address,
-        
-        (** 
-             Flag for token wallet to send transfer callback. 
-             We are passing Falls because the base Account does not have a callback implementation.
-         **)
-        notify: false,  
-        payload: "te6ccgEBAQEAAgAAAA==",
-      }),
-  );
-  
-  const walletAddress = (
-    await tokenRoot.methods
-      .walletOf({ answerId: 0, walletOwner: account.address })
-      .call({ responsible: true })
-  ).value0;
-```
-
-### Smart-contract implementation
-
-
+This standard describes only the basic principles, so Everscale has created a consortium for extensions to the TIP-3 standard. The consortium registers the characteristics of the token's smart contract, after which it is stored inside the blockchain.
+{% endhint %}
